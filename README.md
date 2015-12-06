@@ -10,4 +10,5 @@ Reinforcement learning is one of the best learning algorithm that resemble human
 
 #rlArt (Reinforcement Learning - ART)
 - The project uses Q-Learning combining with Adaptive-Resonance-Theory to learn a more complicated game (Bomberman).
+- The goal of the game is to destroy as many distroyable blocks as possible (exploration) without being catched by the enemies. 
 - ART is used to recognize similar states of the game.
