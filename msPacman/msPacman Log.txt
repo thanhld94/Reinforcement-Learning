@@ -1,0 +1,104 @@
+msPacman Log: Silent training for 100k episodes
+- 09/29: 
+	+ Agent can see only 8 squares directly next to it
+	+ Implementing EpsilonGreedy with epsilon = 5% ( 5% chance to random each move )
+	=> Best Avg = ~12 palette / episode
+	=> Best WinRate = ~2%
+	(+) Can see pass corner
+	(-) Dont know if the ghost is coming
+
+- 09/30: 
+	+ Reward: 500 win, -500 lost, 100/paletee, -1 moving penalty
+	+ Agent can see 2 squares ahead in the moving directions
+	+ Epsilon = 5%
+	=> Best avg = ~14.2 pallete / episode
+	=> Best Winrate = ~5%
+	(+) Known if the ghost is coming
+	(+) more vision in moving direction
+	(-) scare of corners
+
+- 10/01:
+	+ Reward: 500 win, -500 lost, 100/paletee, -1 moving penalty
+	+ Agent can see 2 square ahead in the moving dircections
+	but dont see through walls
+	+ Epsilon = ( number of states visited ) / 20 + 1
+	=> Best avg = 16.84/28
+	=> Best winrate = 15.34%
+	(+) Decrease the number of states, since the agent doesnt need to know what on the other side of the wall
+	(+) Epsilon starts out very high to encourage exploration, but decrease as the agent gain more experience
+	(-) Still afraid of corners
+	(*) Gambling a lot since if the agent followed the ghost to get palette -> high reward. However, getting into 
+	many sucide situation
+
+
+	+ Epsilon = number of times that we have visited that particular state + 1
+	=> Best avg = 13.8/28
+	=> Best winrate = 3.8%
+	(-) Not necessary improve on necessary things, since the agent doesn't get stuck in the hall way that often => unnecessary risk
+
+- 10/02:
+	+ Found bug: Wrong number of states, it should be 4^8 = 66000 instead of 27000, and the states should be based 4 instead of base 3
+	=> Best avg: 17.15/28
+	=> Best winrate: 17%
+	(-) The winning percentage and the average palette vary in each trial since the exploration is randomized. So if the agent couldn't explore the condition in
+	the early stage, it will unlikely to try it in later episodes. So the winrate drop from 17% to 7% in the next trial eventhough we are executing the same source code.
+
+	+ Reward: 500/win, -500/lost, 50/palette, -1 moving
+	=> Best avg: 14.21/28
+	=> Best winrate: 6.25%
+	(+) The agent becomes much more afraid of the ghost. Hence, it rarely follows the ghost to aquire more palette.
+	(-) Become even more afraid of the corner, so the agent will only take a turn if it was being chased by a ghost
+
+	+ Reward: 500/win, -500/lost, 100/palette, -8 moving
+	=> Best avg: 17.64/28
+	=> Best winrate: 17.73%
+	(+) By giving the agent more penalty each time it moves, the agent get stuck less in a tunnel or in the corner
+
+(V2)+ Improvement in agent sensor, agent can now see the four corner next to it in the diagonals. But it can only tell if there is a ghost there or not to limit the amount of states
+	So there are a maximum amount of ( 4^8 ) * ( 4*2 ) * ( 4 ) = ( 4 directions sensor ) * ( 4 corners ) * ( 4 action ) = 66000 * 8 * 4 = ~2.1M states
+	=> Best avg: 17.51/28
+	=> Best winrate: 18.53%
+	(+) Agent can now make turn in the corner with more confidence
+	(-) Still get stuck in the when there is nothing around it
+	(-) The average and winrate still varies. Depending on how lucky the agent it to discover the crucial states in the beginning
+
+	+ -20 moving penalty
+	The goal is to encourage the agent to keep moving toward the palatte to avoid stuck in deadlock, and the agent will be much more aggresive with the palette instead of going
+	back to empty square when there is no ghost around
+	However, it still getting stuck when the vision and sensor around it is symmetric
+	=> Best avg: 18.03/28
+	=> Best winrate: 19.56%
+
+- 10/05:
+	+ Implement revisit penalty: -100
+	=> Best avg: 16.32/28
+	=> Best winrate: 11.76%
+	(+) The agent appears to show the ability to avoid going back and fort the same square in a small board
+	(-) Still get stuck in bigger boards
+	(-) The revisit representation is a little bit misleading for the agent
+
+	+ Testing small board with only one ghost:
+	=> Best avg: 26.19/28
+	=> Best winrate 79.38%
+	(+) The agent shows the ability to avoid the ghost, and it appears that it wins almost every try in the end.
+	(-) Still going head-on to the ghost in a few cases, however, much less than the small board with 2 ghosts
+	* The explaination might be that the agent have not visit that exact state yet
+
+- 10/19: 2 ghosts, -500/lost, +100/pallete, -20 movement, no revisit penalty, 100k episodes, epsilon goes down as we progress
+	+ Fixing ghost moves during learning, and adding a status bit indicating that if there is a ghost in the agent's position so that it knows the different between losing states and 
+	other normal states.
+	=> Best winrate: 33.83%
+	=> Best avg: 21.42%
+	=> 1-ghost winrate = 85.26%
+	(+) The Agent no longer go head into the ghost
+	(-) still get stuck when there are nothing around it
+
+- 10/20: 2 ghost, -500/lost, +100/pallete, -20 movement, no revisit penalty, 100k episodes,
+epsilon goes down as we progess
+	+ (V4) Fixing the bug of corner status bit, wrong implementation in the previous versions
+	=> Best winrate: 49.43%
+	=> Best avg: 22.93/28
+	=> 1-ghost winrate: 90.81%
+	=> 1-ghost avg: 27.29/28
+	(+) Fix corner sensor, hence cannot die unless random movement or trapped
+	(-) Still get stucked when there are nothing around
