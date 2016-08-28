@@ -6,7 +6,7 @@ import javax.swing.JFrame;
 public class Game {
 
 	public static final long AGENT_TIME_INTERVAL = 200L;
-	public static final int SILENT_TRAINING = 5000;
+	public static final int SILENT_TRAINING = 2000;
 
 	public static void main( String[] args ) {
 		/******************/
